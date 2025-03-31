@@ -1,0 +1,91 @@
+package in.talochk.stateless.conf;
+
+import in.talochk.stateless.handlers.UserSuccessfullyLoggedIn;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.oauth2.core.AuthorizationGrantType;
+import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
+import org.springframework.security.oauth2.core.oidc.OidcScopes;
+import org.springframework.security.oauth2.server.authorization.client.InMemoryRegisteredClientRepository;
+import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
+import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
+import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.RequestMatcher;
+
+import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
+
+/**
+ * Authorization configuration.
+ *
+ * @author dtalochkin
+ */
+@RequiredArgsConstructor
+@EnableConfigurationProperties
+@EnableWebSecurity
+@Configuration
+public class AuthorizationConfiguration {
+
+    private final ServerProperties serverProperties;
+
+    @Bean
+    OAuth2AuthorizationServerConfigurer authorizationServerConfigurer(HttpSecurity httpSecurity) {
+        OAuth2AuthorizationServerConfigurer authorizationServerConfigurer = new OAuth2AuthorizationServerConfigurer();
+
+        return authorizationServerConfigurer;
+    }
+
+    @Bean
+    public RegisteredClientRepository registeredClientRepository() {
+
+        return new InMemoryRegisteredClientRepository(
+                RegisteredClient.withId(serverProperties.getClientRegisterId())
+                        .clientId(serverProperties.getClientId())
+                        .clientSecret(serverProperties.getClientSecret())
+                        .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_POST)
+                        .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+                        .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
+                        .redirectUris(
+                                uris -> uris.addAll(serverProperties.getLandingUrisForCodeExchange())
+                        )
+                        .scope(OidcScopes.OPENID)
+//                        .scope(OidcScopes.PROFILE)
+//                        .scope(OidcScopes.EMAIL)
+                        .build()
+
+        );
+    }
+
+    @Order(HIGHEST_PRECEDENCE)
+    @Bean
+    SecurityFilterChain authorizationServerSecurityFilterChain(
+            OAuth2AuthorizationServerConfigurer authorizationServerConfigurer,
+            HttpSecurity httpSecurity) throws Exception {
+
+        RequestMatcher requestMatcher = authorizationServerConfigurer.getEndpointsMatcher();
+
+        return httpSecurity.securityMatcher(requestMatcher)
+                .with(authorizationServerConfigurer, authorizationServerConfigurerCustomizer -> {
+                    authorizationServerConfigurerCustomizer.oidc(Customizer.withDefaults());
+                })
+                .csrf(csrf -> csrf.ignoringRequestMatchers(authorizationServerConfigurer.getEndpointsMatcher()))
+                .build();
+    }
+
+    @Order(2)
+    @Bean
+    SecurityFilterChain defaultFilterChain(HttpSecurity httpSecurity,
+                                           UserSuccessfullyLoggedIn userSuccessfullyLoggedIn) throws Exception {
+
+        return httpSecurity.authorizeHttpRequests(customizer -> customizer.anyRequest().authenticated())
+                .oauth2Login(customizer -> customizer.successHandler(userSuccessfullyLoggedIn)).build();
+    }
+
+}

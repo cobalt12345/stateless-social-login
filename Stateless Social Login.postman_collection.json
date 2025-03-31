@@ -1,0 +1,383 @@
+{
+	"info": {
+		"_postman_id": "4a788a2f-708c-47c5-ab8c-aa4b1865380f",
+		"name": "Stateless Social Login",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "19714347"
+	},
+	"item": [
+		{
+			"name": "Spring Authorization Server - Exchange Code",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"postman.setEnvironmentVariable(\"token\", jsonData.access_token);",
+							"postman.setEnvironmentVariable(\"refresh_token\", jsonData.refresh_token);",
+							"postman.setEnvironmentVariable(\"id_token\", jsonData.id_token);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "client_id",
+							"value": "stateless-social",
+							"type": "text"
+						},
+						{
+							"key": "client_secret",
+							"value": "very-secret-and-strong-password",
+							"type": "text"
+						},
+						{
+							"key": "grant_type",
+							"value": "authorization_code",
+							"type": "text"
+						},
+						{
+							"key": "code",
+							"value": "-BrzBUii9z5UUqO1VGpD64L96ajenKM2U41pb2ieQ-fELeEBBnUJJZ3ufqyr7BIOa3SwajBSUsr5TyPHw4JjsTODzVBwWCrBPFrcGQBmKowPueAeqO2j7kX8YDtYaL2N",
+							"type": "text"
+						},
+						{
+							"key": "state",
+							"value": "FooBar",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "redirect_uri",
+							"value": "https://social.talochk.in",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:8080/oauth2/token",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"oauth2",
+						"token"
+					]
+				},
+				"description": "Obtain SAT (service account token)"
+			},
+			"response": [
+				{
+					"name": "[SAT] Obtain accsess token from a service account",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"name": "Content-Type",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "client_id",
+									"value": "service-account",
+									"type": "text"
+								},
+								{
+									"key": "client_secret",
+									"value": "e405ebed-432a-4625-bff7-bd4f688d4340",
+									"type": "text"
+								},
+								{
+									"key": "grant_type",
+									"value": "client_credentials",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{keycloak_url}}/realms/{{realm}}/protocol/openid-connect/token",
+							"host": [
+								"{{keycloak_url}}"
+							],
+							"path": [
+								"realms",
+								"{{realm}}",
+								"protocol",
+								"openid-connect",
+								"token"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Cache-Control",
+							"value": "no-store"
+						},
+						{
+							"key": "Set-Cookie",
+							"value": "KC_RESTART=; Version=1; Expires=Thu, 01-Jan-1970 00:00:10 GMT; Max-Age=0; Path=/auth/realms/heroes/; HttpOnly"
+						},
+						{
+							"key": "X-XSS-Protection",
+							"value": "1; mode=block"
+						},
+						{
+							"key": "Pragma",
+							"value": "no-cache"
+						},
+						{
+							"key": "X-Frame-Options",
+							"value": "SAMEORIGIN"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 10 May 2020 19:04:32 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Strict-Transport-Security",
+							"value": "max-age=31536000; includeSubDomains"
+						},
+						{
+							"key": "X-Content-Type-Options",
+							"value": "nosniff"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Content-Length",
+							"value": "2625"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"access_token\": \"eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJZTE1yUlJ5OEJ1WmFSZ2otcFIydGZTWmZ4TWVZM3dNM01rYUQyUndiN3pFIn0.eyJleHAiOjE1ODkxMzc3NzIsImlhdCI6MTU4OTEzNzQ3MiwianRpIjoiOTY2ODY4NzAtOWU2My00YjE5LWFiNWYtYzI0Nzg3OGY2NTYxIiwiaXNzIjoiaHR0cDovLzEyNy4wLjAuMTo4MDgwL2F1dGgvcmVhbG1zL2hlcm9lcyIsImF1ZCI6WyJyZWFsbS1tYW5hZ2VtZW50IiwiYWNjb3VudCJdLCJzdWIiOiIzY2QwMmZjYS0wZjkyLTRkMjYtODViMC04NzJlODIwNGRiOTEiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJzZXJ2aWNlLWFjY291bnQiLCJzZXNzaW9uX3N0YXRlIjoiYmE5YTA5ZmYtMTIyYi00YmRkLWI1ODUtODg2ZTQwN2ExMjk5IiwiYWNyIjoiMSIsInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJvZmZsaW5lX2FjY2VzcyIsInVtYV9hdXRob3JpemF0aW9uIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsicmVhbG0tbWFuYWdlbWVudCI6eyJyb2xlcyI6WyJ2aWV3LWlkZW50aXR5LXByb3ZpZGVycyIsInZpZXctcmVhbG0iLCJtYW5hZ2UtaWRlbnRpdHktcHJvdmlkZXJzIiwiaW1wZXJzb25hdGlvbiIsInJlYWxtLWFkbWluIiwiY3JlYXRlLWNsaWVudCIsIm1hbmFnZS11c2VycyIsInF1ZXJ5LXJlYWxtcyIsInZpZXctYXV0aG9yaXphdGlvbiIsInF1ZXJ5LWNsaWVudHMiLCJxdWVyeS11c2VycyIsIm1hbmFnZS1ldmVudHMiLCJtYW5hZ2UtcmVhbG0iLCJ2aWV3LWV2ZW50cyIsInZpZXctdXNlcnMiLCJ2aWV3LWNsaWVudHMiLCJtYW5hZ2UtYXV0aG9yaXphdGlvbiIsIm1hbmFnZS1jbGllbnRzIiwicXVlcnktZ3JvdXBzIl19LCJhY2NvdW50Ijp7InJvbGVzIjpbIm1hbmFnZS1hY2NvdW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJ2aWV3LXByb2ZpbGUiXX19LCJzY29wZSI6InByb2ZpbGUgZW1haWwiLCJjbGllbnRIb3N0IjoiMTcyLjE3LjAuMSIsImNsaWVudElkIjoic2VydmljZS1hY2NvdW50IiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJzZXJ2aWNlLWFjY291bnQtc2VydmljZS1hY2NvdW50IiwiY2xpZW50QWRkcmVzcyI6IjE3Mi4xNy4wLjEifQ.QjsnpAubiCn6ymCkFL4yNe-D4sYMfFEiNxN1TXXbYy1MlVYWAYemEWE8RI3aYnnzdvwiwMnXTnlChN-PjI6W8hMjRsAKpWAduA-xkULCU9GHv-p57KvB6ad0nNV01B4SSnJNjfOx-qw5zQM3-yBKIDNZLUOgwdqC-hRQkpDqSUMvE1e3POSbEi4LjGA0fk4vdB5pphe7F5iXOPwG6bt-VErN8CVXFemS8JfKkCU-YcZlaVOTXXoCJdaqwbcOR8gBiJhwWfhe7XR2w3eQJuZZa3cMp9S7RqUmTHE8b9N2VHmUNun_UO2adOCobZRQ2oRsw3tV-N6Y54NU_W-ZQEnqcw\",\n    \"expires_in\": 300,\n    \"refresh_expires_in\": 1800,\n    \"refresh_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICIxYmVmYmM2NS0zN2EyLTQxZTctYjM2NC1lMjc0NWQ4NDRmNzcifQ.eyJleHAiOjE1ODkxMzkyNzIsImlhdCI6MTU4OTEzNzQ3MiwianRpIjoiMDI5ODAxYzEtODliZi00MTIxLTlhZDMtNzFkYTVlYzQ5NzNlIiwiaXNzIjoiaHR0cDovLzEyNy4wLjAuMTo4MDgwL2F1dGgvcmVhbG1zL2hlcm9lcyIsImF1ZCI6Imh0dHA6Ly8xMjcuMC4wLjE6ODA4MC9hdXRoL3JlYWxtcy9oZXJvZXMiLCJzdWIiOiIzY2QwMmZjYS0wZjkyLTRkMjYtODViMC04NzJlODIwNGRiOTEiLCJ0eXAiOiJSZWZyZXNoIiwiYXpwIjoic2VydmljZS1hY2NvdW50Iiwic2Vzc2lvbl9zdGF0ZSI6ImJhOWEwOWZmLTEyMmItNGJkZC1iNTg1LTg4NmU0MDdhMTI5OSIsInNjb3BlIjoicHJvZmlsZSBlbWFpbCJ9.AoD5T4OTm4ueUp4Hi1YTL4Wk2XuqqCJE-7pqUjco5sM\",\n    \"token_type\": \"bearer\",\n    \"not-before-policy\": 1589105644,\n    \"session_state\": \"ba9a09ff-122b-4bdd-b585-886e407a1299\",\n    \"scope\": \"profile email\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Spring Authorization Server - Refresh Token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"postman.setEnvironmentVariable(\"token\", jsonData.access_token);",
+							"postman.setEnvironmentVariable(\"refresh_token\", jsonData.refresh_token);",
+							"postman.setEnvironmentVariable(\"id_token\", jsonData.id_token);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "client_id",
+							"value": "stateless-social",
+							"type": "text"
+						},
+						{
+							"key": "client_secret",
+							"value": "very-secret-and-strong-password",
+							"type": "text"
+						},
+						{
+							"key": "grant_type",
+							"value": "refresh_token",
+							"type": "text"
+						},
+						{
+							"key": "refresh_token",
+							"value": "K2tjac5W9onOkAAvlF8-XVx9NmPnXRbSnFzPRg2cIPmKHu7JmMu5GTcgDuB2EnhfatqRHy7GgZUV4X-hEjQs_Ybcpe1XebS4Ybo7TylBjhWkH8EbtciA12r7f0UiBiTL",
+							"type": "text"
+						},
+						{
+							"key": "state",
+							"value": "FooBar",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "token_type_hint",
+							"value": "refresh_token",
+							"type": "text",
+							"disabled": true
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:8080/oauth2/token",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"oauth2",
+						"token"
+					]
+				},
+				"description": "Obtain SAT (service account token)"
+			},
+			"response": [
+				{
+					"name": "[SAT] Obtain accsess token from a service account",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"name": "Content-Type",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "client_id",
+									"value": "service-account",
+									"type": "text"
+								},
+								{
+									"key": "client_secret",
+									"value": "e405ebed-432a-4625-bff7-bd4f688d4340",
+									"type": "text"
+								},
+								{
+									"key": "grant_type",
+									"value": "client_credentials",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{keycloak_url}}/realms/{{realm}}/protocol/openid-connect/token",
+							"host": [
+								"{{keycloak_url}}"
+							],
+							"path": [
+								"realms",
+								"{{realm}}",
+								"protocol",
+								"openid-connect",
+								"token"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Cache-Control",
+							"value": "no-store"
+						},
+						{
+							"key": "Set-Cookie",
+							"value": "KC_RESTART=; Version=1; Expires=Thu, 01-Jan-1970 00:00:10 GMT; Max-Age=0; Path=/auth/realms/heroes/; HttpOnly"
+						},
+						{
+							"key": "X-XSS-Protection",
+							"value": "1; mode=block"
+						},
+						{
+							"key": "Pragma",
+							"value": "no-cache"
+						},
+						{
+							"key": "X-Frame-Options",
+							"value": "SAMEORIGIN"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 10 May 2020 19:04:32 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Strict-Transport-Security",
+							"value": "max-age=31536000; includeSubDomains"
+						},
+						{
+							"key": "X-Content-Type-Options",
+							"value": "nosniff"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Content-Length",
+							"value": "2625"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"access_token\": \"eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJZTE1yUlJ5OEJ1WmFSZ2otcFIydGZTWmZ4TWVZM3dNM01rYUQyUndiN3pFIn0.eyJleHAiOjE1ODkxMzc3NzIsImlhdCI6MTU4OTEzNzQ3MiwianRpIjoiOTY2ODY4NzAtOWU2My00YjE5LWFiNWYtYzI0Nzg3OGY2NTYxIiwiaXNzIjoiaHR0cDovLzEyNy4wLjAuMTo4MDgwL2F1dGgvcmVhbG1zL2hlcm9lcyIsImF1ZCI6WyJyZWFsbS1tYW5hZ2VtZW50IiwiYWNjb3VudCJdLCJzdWIiOiIzY2QwMmZjYS0wZjkyLTRkMjYtODViMC04NzJlODIwNGRiOTEiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJzZXJ2aWNlLWFjY291bnQiLCJzZXNzaW9uX3N0YXRlIjoiYmE5YTA5ZmYtMTIyYi00YmRkLWI1ODUtODg2ZTQwN2ExMjk5IiwiYWNyIjoiMSIsInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJvZmZsaW5lX2FjY2VzcyIsInVtYV9hdXRob3JpemF0aW9uIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsicmVhbG0tbWFuYWdlbWVudCI6eyJyb2xlcyI6WyJ2aWV3LWlkZW50aXR5LXByb3ZpZGVycyIsInZpZXctcmVhbG0iLCJtYW5hZ2UtaWRlbnRpdHktcHJvdmlkZXJzIiwiaW1wZXJzb25hdGlvbiIsInJlYWxtLWFkbWluIiwiY3JlYXRlLWNsaWVudCIsIm1hbmFnZS11c2VycyIsInF1ZXJ5LXJlYWxtcyIsInZpZXctYXV0aG9yaXphdGlvbiIsInF1ZXJ5LWNsaWVudHMiLCJxdWVyeS11c2VycyIsIm1hbmFnZS1ldmVudHMiLCJtYW5hZ2UtcmVhbG0iLCJ2aWV3LWV2ZW50cyIsInZpZXctdXNlcnMiLCJ2aWV3LWNsaWVudHMiLCJtYW5hZ2UtYXV0aG9yaXphdGlvbiIsIm1hbmFnZS1jbGllbnRzIiwicXVlcnktZ3JvdXBzIl19LCJhY2NvdW50Ijp7InJvbGVzIjpbIm1hbmFnZS1hY2NvdW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJ2aWV3LXByb2ZpbGUiXX19LCJzY29wZSI6InByb2ZpbGUgZW1haWwiLCJjbGllbnRIb3N0IjoiMTcyLjE3LjAuMSIsImNsaWVudElkIjoic2VydmljZS1hY2NvdW50IiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJzZXJ2aWNlLWFjY291bnQtc2VydmljZS1hY2NvdW50IiwiY2xpZW50QWRkcmVzcyI6IjE3Mi4xNy4wLjEifQ.QjsnpAubiCn6ymCkFL4yNe-D4sYMfFEiNxN1TXXbYy1MlVYWAYemEWE8RI3aYnnzdvwiwMnXTnlChN-PjI6W8hMjRsAKpWAduA-xkULCU9GHv-p57KvB6ad0nNV01B4SSnJNjfOx-qw5zQM3-yBKIDNZLUOgwdqC-hRQkpDqSUMvE1e3POSbEi4LjGA0fk4vdB5pphe7F5iXOPwG6bt-VErN8CVXFemS8JfKkCU-YcZlaVOTXXoCJdaqwbcOR8gBiJhwWfhe7XR2w3eQJuZZa3cMp9S7RqUmTHE8b9N2VHmUNun_UO2adOCobZRQ2oRsw3tV-N6Y54NU_W-ZQEnqcw\",\n    \"expires_in\": 300,\n    \"refresh_expires_in\": 1800,\n    \"refresh_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICIxYmVmYmM2NS0zN2EyLTQxZTctYjM2NC1lMjc0NWQ4NDRmNzcifQ.eyJleHAiOjE1ODkxMzkyNzIsImlhdCI6MTU4OTEzNzQ3MiwianRpIjoiMDI5ODAxYzEtODliZi00MTIxLTlhZDMtNzFkYTVlYzQ5NzNlIiwiaXNzIjoiaHR0cDovLzEyNy4wLjAuMTo4MDgwL2F1dGgvcmVhbG1zL2hlcm9lcyIsImF1ZCI6Imh0dHA6Ly8xMjcuMC4wLjE6ODA4MC9hdXRoL3JlYWxtcy9oZXJvZXMiLCJzdWIiOiIzY2QwMmZjYS0wZjkyLTRkMjYtODViMC04NzJlODIwNGRiOTEiLCJ0eXAiOiJSZWZyZXNoIiwiYXpwIjoic2VydmljZS1hY2NvdW50Iiwic2Vzc2lvbl9zdGF0ZSI6ImJhOWEwOWZmLTEyMmItNGJkZC1iNTg1LTg4NmU0MDdhMTI5OSIsInNjb3BlIjoicHJvZmlsZSBlbWFpbCJ9.AoD5T4OTm4ueUp4Hi1YTL4Wk2XuqqCJE-7pqUjco5sM\",\n    \"token_type\": \"bearer\",\n    \"not-before-policy\": 1589105644,\n    \"session_state\": \"ba9a09ff-122b-4bdd-b585-886e407a1299\",\n    \"scope\": \"profile email\"\n}"
+				}
+			]
+		}
+	]
+}

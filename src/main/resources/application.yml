@@ -1,0 +1,52 @@
+app:
+  authorization-server:
+    client-id: "stateless-social"
+    client-register-id: "stateless-social"
+    client-secret: "{noop}very-secret-and-strong-password"
+    landing-uris-for-code-exchange:
+      - "https://social.talochk.in"
+      - "http://localhost:8080"
+    code-authorization-uri: "/oauth2/authorize?client_id=stateless-social&response_type=code&response_mode=query&redirect_uri=https://social.talochk.in"
+
+    google:
+      client-secret: "secret-received-from-google"
+      client-id: "client-id-received-from-google"
+      authorization-uri: "https://accounts.google.com/o/oauth2/v2/auth"
+      token-uri: "https://www.googleapis.com/oauth2/v4/token"
+      user-info-uri: "https://www.googleapis.com/oauth2/v3/userinfo"
+      jwk-set-uri: "https://www.googleapis.com/oauth2/v3/certs"
+      redirect-uri: "http://localhost:8080/login/oauth2/code/google"
+
+spring:
+  application:
+    name: "stateless-social-login"
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            provider: google
+            client-id: ${app.authorization-server.google.client-id}
+            client-secret: ${app.authorization-server.google.client-secret}
+            authorization-grant-type: authorization_code
+            redirect-uri: ${app.authorization-server.google.redirect-uri}
+            scope:
+              - openid
+              - email
+              - profile
+
+        provider:
+          google:
+            authorization-uri: ${app.authorization-server.google.authorization-uri}
+            token-uri: ${app.authorization-server.google.token-uri}
+            user-info-uri: ${app.authorization-server.google.user-info-uri}
+            jwk-set-uri: ${app.authorization-server.google.jwk-set-uri}
+            user-name-attribute: email
+
+logging:
+  level:
+    root: info
+    org:
+      springframework:
+        security: trace
+    in.talochk.stateless: info
