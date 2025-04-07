@@ -16,6 +16,7 @@ app:
       user-info-uri: "https://www.googleapis.com/oauth2/v3/userinfo"
       jwk-set-uri: "https://www.googleapis.com/oauth2/v3/certs"
       redirect-uri: "http://localhost:8080/login/oauth2/code/google"
+      login-form-provider-direct-uri: "/oauth2/authorization/google"
 
     http-session:
       timeout: 300
