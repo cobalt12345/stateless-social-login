@@ -26,10 +26,23 @@ public class ServerProperties {
 
     private List<String> landingUrisForCodeExchange;
 
+    private ServerProperties.Google google;
+
+    private ServerProperties.Keycloak keycloak;
+
     @Getter
     @Setter
     public static class Google {
         private String clientId;
         private String clientSecret;
+        private String loginFormProviderDirectUri;
     }
+
+    @Getter
+    @Setter
+    public static class Keycloak {
+        private String loginFormProviderDirectUri;
+    }
+
+
 }

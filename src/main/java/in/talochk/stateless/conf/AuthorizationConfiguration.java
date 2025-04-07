@@ -18,6 +18,8 @@ import org.springframework.security.oauth2.server.authorization.client.Registere
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
+import org.springframework.security.web.util.matcher.ParameterRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
 import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
@@ -32,6 +34,11 @@ import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
 @EnableWebSecurity
 @Configuration
 public class AuthorizationConfiguration {
+
+    private static final String SOCIAL_LOGIN_PROVIDER_PARAMETER = "provider";
+    private static final String GOOGLE_SOCIAL_LOGIN_PROVIDER = "google";
+    private static final String KEYCLOAK_SOCIAL_LOGIN_PROVIDER = "keycloak";
+
 
     private final ServerProperties serverProperties;
 
@@ -76,6 +83,23 @@ public class AuthorizationConfiguration {
                     authorizationServerConfigurerCustomizer.oidc(Customizer.withDefaults());
                 })
                 .csrf(csrf -> csrf.ignoringRequestMatchers(authorizationServerConfigurer.getEndpointsMatcher()))
+                .exceptionHandling(exceptionHandlingCustomizer -> {
+                    exceptionHandlingCustomizer.defaultAuthenticationEntryPointFor(
+                            new LoginUrlAuthenticationEntryPoint(serverProperties.getGoogle()
+                                    .getLoginFormProviderDirectUri()),
+
+                            new ParameterRequestMatcher(SOCIAL_LOGIN_PROVIDER_PARAMETER, GOOGLE_SOCIAL_LOGIN_PROVIDER)
+                    );
+                    exceptionHandlingCustomizer.defaultAuthenticationEntryPointFor(
+                            new LoginUrlAuthenticationEntryPoint(serverProperties.getKeycloak()
+                                    .getLoginFormProviderDirectUri()),
+
+                            new ParameterRequestMatcher(SOCIAL_LOGIN_PROVIDER_PARAMETER, KEYCLOAK_SOCIAL_LOGIN_PROVIDER)
+                    );
+                })
+                .authorizeHttpRequests(authorizeHttpRequestsCustomizer -> {
+                    authorizeHttpRequestsCustomizer.anyRequest().authenticated();
+                })
                 .build();
     }
 
