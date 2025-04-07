@@ -12,9 +12,9 @@ import java.util.List;
  *
  * @author dtalochkin
  */
+@Configuration
 @Getter
 @Setter
-@Configuration
 @ConfigurationProperties(prefix = "app.authorization-server")
 public class ServerProperties {
 
@@ -26,10 +26,32 @@ public class ServerProperties {
 
     private List<String> landingUrisForCodeExchange;
 
+    private ServerProperties.Google google;
+
+    private ServerProperties.Keycloak keycloak;
+
+    private ServerProperties.HttpSession httpSession;
+
     @Getter
     @Setter
     public static class Google {
         private String clientId;
         private String clientSecret;
+        private String loginFormProviderDirectUri;
+    }
+
+    @Getter
+    @Setter
+    public static class Keycloak {
+        private String loginFormProviderDirectUri;
+    }
+
+    @Getter
+    @Setter
+    public static class HttpSession {
+        private String redisKeysNamespace;
+        private String sessionCookieDomainNamePattern;
+        private String sessionCookieName;
+        private Integer cookieMaxAgeSeconds;
     }
 }

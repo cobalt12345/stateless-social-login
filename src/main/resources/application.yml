@@ -16,13 +16,13 @@ app:
       user-info-uri: "https://www.googleapis.com/oauth2/v3/userinfo"
       jwk-set-uri: "https://www.googleapis.com/oauth2/v3/certs"
       redirect-uri: "http://localhost:8080/login/oauth2/code/google"
+      login-form-provider-direct-uri: "/oauth2/authorization/google"
 
     http-session:
-      timeout: 300
-      flush-mode: on_save
       redis-keys-namespace: social:login
+      cookie-max-age-seconds: 300
       session-cookie-domain-name-pattern: ^.*?\.?([A-Za-z_0-9-]+\.?[a-z]*)$
-      session-cookie-name: SOCIAL_SESSIONID
+      session-cookie-name: SOCIAL_STATELESS_SESSIONID
 
 spring:
   application:
@@ -53,15 +53,6 @@ spring:
     redis:
       host: localhost
       port: 6379
-  session:
-    redis:
-      flush-mode: ${app.authorization-server.http-session.flush-mode}
-      namespace: ${app.authorization-server.http-session.redis-keys-namespace}
-
-server:
-  servlet:
-    session:
-      timeout: ${app.authorization-server.http-session.timeout}
 
 logging:
   level:
