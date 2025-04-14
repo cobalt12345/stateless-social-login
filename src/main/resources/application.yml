@@ -1,4 +1,6 @@
 app:
+  properties:
+    source: "classpath:application.yaml"
   authorization-server:
     client-id: "stateless-social"
     client-register-id: "stateless-social"
@@ -19,8 +21,6 @@ app:
       login-form-provider-direct-uri: "/oauth2/authorization/google"
 
 spring:
-  application:
-    name: "stateless-social-login"
   security:
     oauth2:
       client:
@@ -43,6 +43,15 @@ spring:
             user-info-uri: ${app.authorization-server.google.user-info-uri}
             jwk-set-uri: ${app.authorization-server.google.jwk-set-uri}
             user-name-attribute: email
+  config:
+    import: "configserver:"
+
+  cloud:
+    config:
+      uri: "http://localhost:8888/"
+      name: "stateless-social-login"
+#      profile: "local"
+
 
 logging:
   level:
@@ -51,3 +60,8 @@ logging:
       springframework:
         security: trace
     in.talochk.stateless: info
+
+management:
+  endpoints.web.exposure.include: info, health, metrics, env, caches, prometheus, scheduledtasks, loggers
+server:
+  port: 8080

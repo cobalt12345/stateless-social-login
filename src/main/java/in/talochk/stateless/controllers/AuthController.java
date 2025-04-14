@@ -28,4 +28,10 @@ public class AuthController {
 
         response.sendRedirect(codeAuthUri);
     }
+
+    @GetMapping("/source")
+    public String propertiesSource(@Value("${app.properties.source}") String source) {
+
+        return source;
+    }
 }

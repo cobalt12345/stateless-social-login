@@ -108,8 +108,10 @@ public class AuthorizationConfiguration {
     SecurityFilterChain defaultFilterChain(HttpSecurity httpSecurity,
                                            UserSuccessfullyLoggedIn userSuccessfullyLoggedIn) throws Exception {
 
-        return httpSecurity.authorizeHttpRequests(customizer -> customizer.anyRequest().authenticated())
-                .oauth2Login(customizer -> customizer.successHandler(userSuccessfullyLoggedIn)).build();
+        return httpSecurity.authorizeHttpRequests(customizer -> {
+            customizer.requestMatchers("/actuator/**", "/source/**").permitAll();
+            customizer.anyRequest().authenticated();
+        }).oauth2Login(customizer -> customizer.successHandler(userSuccessfullyLoggedIn)).build();
     }
 
 }
